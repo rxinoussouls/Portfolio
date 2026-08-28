@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta 
+  name="viewport" 
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+<meta 
+  name="description" 
+  content="THADAPAN SEINGYONG — iOS 26 Liquid Spatial Portfolio"
+>
+<meta 
+  name="theme-color" 
+  content="#02050A"
+>
+<title>THADAPAN SEINGYONG — Spatial Portfolio</title>
+
+<!-- Fonts -->
+<link 
+  rel="preconnect" 
+  href="https://fonts.googleapis.com"
+>
+<link 
+  rel="preconnect" 
+  href="https://fonts.gstatic.com" 
+  crossorigin
+>
+<link 
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" 
+  rel="stylesheet"
+>
+
+<style>
+/* ==========================================================================
+   CSS VARIABLES & THEMING
+   ========================================================================== */
+:root {
+    /* Color Palette - Spatial Dark Mode */
+    --oled-black: #02050A;
+    --deep-navy: #06152F;
+    --deep-blue: #0A3D82;
+    --apple-blue: #1769C2;
+    --cyan-bright: #4FDDEB;
+    --aqua-soft: #74E7D0;
+    --ice-white: #DDFBFF;
+    --pure-white: #FFFFFF;
+    
+    /* Text Colors */
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(221, 251, 255, 0.75);
+    --text-tertiary: rgba(221, 251, 255, 0.45);
+    --text-muted: rgba(255, 255, 255, 0.25);
+    
+    /* Surface Colors (Glassmorphism) */
+    --glass-surface-1: rgba(6, 21, 47, 0.35);
+    --glass-surface-2: rgba(10, 61, 130, 0.15);
+    --glass-surface-3: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(215, 251, 255, 0.15);
+    --glass-border-highlight: rgba(255, 255, 255, 0.4);
+    
+    /* Physics & Interactive Variables */
+    --pointer-x: 50vw;
+    --pointer-y: 50vh;
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+    --card-px: 50%;
+    --card-py: 50%;
+    
+    /* Typography */
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Prompt', sans-serif;
+    
+    /* Layout */
+    --container-max: 1200px;
+    --section-pad-y: 160px;
+    --section-pad-x: 8%;
+    
+    /* Transitions */
+    --spring-easing: cubic-bezier(0.16, 1, 0.3, 1);
+    --smooth-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--oled-black);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    font-size: 16px;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--oled-black);
+    font-family: var(--font-primary);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+p, span, div, a {
+    font-family: var(--font-secondary);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+/* ==========================================================================
+   BACKGROUND & CANVAS SYSTEM
+   ========================================================================== */
+.liquid-wallpaper-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -5;
+    pointer-events: none;
+    overflow: hidden;
+    transform: translate3d(
+        calc(var(--parallax-x) * 0.15), 
+        calc(var(--parallax-y) * 0.15), 
+        0
+    );
+    will-change: transform;
+}
+
+#bg-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(8px);
+    opacity: 0.8;
+}
+
+.bg-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at 50% 0%, 
+        rgba(10, 61, 130, 0.4) 0%, 
+        rgba(2, 5, 10, 0.8) 60%, 
+        rgba(2, 5, 10, 1) 100%
+    );
+    mix-blend-mode: multiply;
+}
+
+/* ==========================================================================
+   NAVIGATION (GLASS PILL)
+   ========================================================================== */
+.nav-stage {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 640px;
+    perspective: 1000px;
+}
+
+.ios-glass-nav {
+    position: relative;
+    background: rgba(6, 21, 47, 0.45);
+    backdrop-filter: blur(40px) saturate(210%);
+    -webkit-backdrop-filter: blur(40px) saturate(210%);
+    border: 1px solid var(--glass-border);
+    border-radius: 40px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 
+        0 30px 60px rgba(2, 5, 10, 0.6), 
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.3);
+    transition: 
+        transform 0.5s var(--spring-easing), 
+        background 0.5s ease;
+    transform-style: preserve-3d;
+}
+
+.ios-glass-nav.compact {
+    transform: scale(0.92) translateY(-10px);
+    background: rgba(2, 5, 10, 0.85);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-fluid-pill {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    height: calc(100% - 16px);
+    width: 80px;
+    background: linear-gradient(
+        135deg, 
+        rgba(255, 255, 255, 0.25), 
+        rgba(79, 221, 235, 0.15)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.6), 
+        0 8px 20px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    will-change: transform, width;
+}
+
+.nav-item {
+    position: relative;
+    z-index: 2;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 30px;
+    transition: 
+        color 0.3s ease, 
+        transform 0.2s var(--spring-easing);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-primary);
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    color: var(--text-primary);
+}
+
+.nav-item:active {
+    transform: scale(0.92);
+}
+
+.nav-item.active {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.nav-icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* ==========================================================================
+   LAYOUT & SECTIONS
+   ========================================================================== */
+section {
+    min-height: 100vh;
+    padding: var(--section-pad-y) var(--section-pad-x);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    perspective: 1500px;
+}
+
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 64px;
+    transform: translate3d(
+        calc(var(--parallax-x) * 0.4), 
+        calc(var(--parallax-y) * 0.4), 
+        0
+    );
+}
+
+.section-title {
+    font-family: var(--font-primary);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(
+        180deg, 
+        #FFFFFF 20%, 
+        var(--ice-white) 60%, 
+        rgba(221, 251, 255, 0.3) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--cyan-bright);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   TRANSLUCENT PANELS (GLASS CARDS)
+   ========================================================================== */
+.translucent-panel {
+    position: relative;
+    background: var(--glass-surface-1);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px;
+    padding: 40px;
+    box-shadow: 
+        0 20px 50px rgba(2, 5, 10, 0.5), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: 
+        border-color 0.4s ease,
+        transform 0.4s var(--spring-easing),
+        box-shadow 0.4s ease;
+}
+
+.translucent-panel:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 30px 60px rgba(2, 5, 10, 0.7), 
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    transform: translateY(-5px);
+}
+
+.translucent-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        600px circle at var(--card-px) var(--card-py),
+        rgba(116, 231, 208, 0.15),
+        rgba(23, 105, 194, 0.05) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.translucent-panel:hover::before {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   HERO SECTION
+   ========================================================================== */
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+}
+
+.hero-text-side {
+    position: relative;
+    z-index: 2;
+    transform: translate3d(
+        calc(var(--parallax-x) * 1.5), 
+        calc(var(--parallax-y) * 1.5), 
+        0
+    );
+}
+
+.hero-greeting {
+    font-size: 1.2rem;
+    color: var(--aqua-soft);
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hero-greeting::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--aqua-soft);
+}
+
+.hero-title {
+    font-family: var(--font-primary);
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    background: linear-gradient(
+        180deg, 
+        #FFFFFF 0%, 
+        var(--ice-white) 80%,
+        rgba(255,255,255,0) 150%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.hero-subtitle strong {
+    color: var(--cyan-bright);
+    font-weight: 600;
+}
+
+/* Badges */
+.badges-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.interactive-glass-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--glass-surface-3);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    transition: 
+        transform 0.3s var(--spring-easing), 
+        background 0.3s ease,
+        border-color 0.3s ease;
+    cursor: pointer;
+}
+
+.interactive-glass-badge:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--glass-border-highlight);
+    transform: scale(1.05) translateY(-4px);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.badge-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--cyan-bright);
+}
+
+/* Hero 3D Object */
+.hero-3d-stage {
+    position: relative;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+    touch-action: none;
+    cursor: grab;
+}
+
+.hero-3d-stage:active {
+    cursor: grabbing;
+}
+
+.spatial-liquid-object {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.glass-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 56px;
+    pointer-events: none;
+}
+
+.layer-shadow {
+    background: rgba(2, 5, 10, 0.8);
+    filter: blur(40px);
+    transform: translateZ(-80px) scale(0.85);
+}
+
+.layer-outer-glass {
+    background: linear-gradient(
+        135deg, 
+        rgba(255, 255, 255, 0.15), 
+        rgba(10, 61, 130, 0.1)
+    );
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.5), 
+        inset 0 -4px 10px rgba(10, 61, 130, 0.4), 
+        0 30px 60px rgba(2, 5, 10, 0.8);
+    transform: translateZ(0px);
+}
+
+.layer-inner-core {
+    inset: 40px;
+    border-radius: 40px;
+    background: linear-gradient(
+        135deg, 
+        var(--apple-blue), 
+        var(--cyan-bright)
+    );
+    opacity: 0.5;
+    filter: blur(16px);
+    transform: translateZ(40px);
+    animation: pulse-core 4s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-core {
+    0% { opacity: 0.4; transform: translateZ(40px) scale(0.95); }
+    100% { opacity: 0.7; transform: translateZ(40px) scale(1.05); }
+}
+
+.layer-specular {
+    inset: 0;
+    border-radius: 56px;
+    background: radial-gradient(
+        circle at var(--spec-x, 30%) var(--spec-y, 30%),
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 50%
+    );
+    mix-blend-mode: overlay;
+    transform: translateZ(60px);
+}
+
+.layer-content-badge {
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    transform: translateZ(90px);
+}
+
+.spatial-core-icon-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ice-white);
+    box-shadow: 
+        0 15px 30px rgba(0, 0, 0, 0.4),
+        inset 0 2px 5px rgba(255,255,255,0.5);
+}
+
+.spatial-core-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.spatial-core-text {
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.3);
+    padding: 6px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+/* ==========================================================================
+   ABOUT SECTION
+   ========================================================================== */
+.about-grid {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.about-text-content {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.about-text-content p {
+    margin-bottom: 20px;
+}
+
+.about-text-content strong {
+    color: var(--cyan-bright);
+    font-weight: 500;
+}
+
+.about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--pure-white);
+    margin-bottom: 8px;
+    font-family: var(--font-primary);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   SKILLS SECTION (Expanded)
+   ========================================================================== */
+.skills-wrapper {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px;
+    width: 100%;
+}
+
+.skill-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 24px;
+}
+
+.skill-ring-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 24px;
+}
+
+.skill-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 0 10px rgba(79, 221, 235, 0.3));
+}
+
+.skill-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 8;
+}
+
+.skill-ring-progress {
+    fill: none;
+    stroke: url(#skill-gradient-ios);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 2s var(--spring-easing);
+}
+
+.skill-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+}
+
+.skill-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.skill-desc {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   TIMELINE / EXPERIENCE SECTION
+   ========================================================================== */
+.timeline-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50px;
+    width: 2px;
+    background: linear-gradient(
+        180deg, 
+        transparent, 
+        var(--cyan-bright), 
+        var(--apple-blue), 
+        transparent
+    );
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 100px;
+    margin-bottom: 40px;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: 41px;
+    top: 20px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--oled-black);
+    border: 3px solid var(--cyan-bright);
+    box-shadow: 0 0 15px rgba(79, 221, 235, 0.6);
+    z-index: 2;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.timeline-item:hover .timeline-dot {
+    transform: scale(1.3);
+    background: var(--cyan-bright);
+}
+
+.timeline-content {
+    padding: 30px;
+}
+
+.timeline-date {
+    font-size: 0.9rem;
+    color: var(--cyan-bright);
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+}
+
+.timeline-title {
+    font-size: 1.3rem;
+    color: var(--pure-white);
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.timeline-desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   PROJECTS SECTION (Expanded)
+   ========================================================================== */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 320px;
+    group: hover;
+}
+
+.project-header {
+    margin-bottom: 24px;
+}
+
+.project-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    background: rgba(79, 221, 235, 0.1);
+    border: 1px solid rgba(79, 221, 235, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cyan-bright);
+    margin-bottom: 24px;
+    transition: 
+        transform 0.4s var(--spring-easing),
+        background 0.4s ease;
+}
+
+.project-card:hover .project-icon-box {
+    transform: scale(1.1) rotate(5deg);
+    background: rgba(79, 221, 235, 0.2);
+}
+
+.project-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.project-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.project-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.project-footer {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.project-tag {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-primary);
+}
+
+/* ==========================================================================
+   ACTIVITIES SECTION
+   ========================================================================== */
+.activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.activity-tile {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px;
+}
+
+.activity-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: rgba(23, 105, 194, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--aqua-soft);
+    flex-shrink: 0;
+}
+
+.activity-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.activity-info {
+    flex: 1;
+}
+
+.activity-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.activity-sub {
+    font-size: 0.95rem;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   CONTACT SECTION & BUTTONS
+   ========================================================================== */
+.contact-wrapper {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.contact-card {
+    text-align: center;
+    padding: 80px 40px;
+}
+
+.contact-icon-large {
+    width: 80px;
+    height: 80px;
+    color: var(--pure-white);
+    margin-bottom: 24px;
+    opacity: 0.8;
+}
+
+.contact-desc {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 48px;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.ios-physics-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 40px;
+    border-radius: 100px;
+    text-decoration: none;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    font-weight: 600;
+    font-size: 1.1rem;
+    font-family: var(--font-primary);
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.3), 
+        0 15px 35px rgba(2, 5, 10, 0.5);
+    overflow: hidden;
+    cursor: pointer;
+    touch-action: manipulation;
+    will-change: transform;
+    transition: 
+        border-color 0.3s ease, 
+        background 0.3s ease;
+}
+
+.ios-physics-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center, 
+        rgba(255,255,255,0.2) 0%, 
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ios-physics-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 45%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 55%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.ios-physics-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ios-physics-btn:hover::before {
+    opacity: 1;
+}
+
+.ios-physics-btn:hover::after {
+    transform: translateX(100%);
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+    padding: 60px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(2, 5, 10, 0.8);
+    backdrop-filter: blur(20px);
+}
+
+.footer-text {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    font-family: var(--font-primary);
+}
+
+.footer-heart {
+    color: #ff4757;
+    display: inline-block;
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* ==========================================================================
+   ANIMATIONS & REVEAL SYSTEM
+   ========================================================================== */
+.reveal-node {
+    opacity: 0;
+    transform: translate3d(0, 60px, 0) scale(0.95);
+    filter: blur(16px);
+    transition: 
+        opacity 1s var(--spring-easing), 
+        transform 1s var(--spring-easing), 
+        filter 1s var(--spring-easing);
+}
+
+.reveal-node.revealed {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: 4rem; }
+}
+
+@media (max-width: 768px) {
+    .hero-grid { 
+        grid-template-columns: 1fr; 
+        text-align: center; 
+        gap: 40px;
+    }
+    .hero-text-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .hero-greeting::before { display: none; }
+    .badges-container { justify-content: center; }
+    .hero-3d-stage { height: 400px; }
+    .spatial-liquid-object { width: 260px; height: 260px; }
+    
+    .timeline-container::before { left: 30px; }
+    .timeline-dot { left: 21px; }
+    .timeline-item { padding-left: 70px; }
+    
+    .nav-item span { display: none; } /* Hide text on mobile nav, show icons only */
+    .nav-item { padding: 12px; }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --section-pad-y: 120px;
+        --section-pad-x: 20px;
+    }
+    .hero-title { font-size: 3rem; }
+    .translucent-panel { padding: 24px; }
+    .contact-buttons { flex-direction: column; width: 100%; }
+    .ios-physics-btn { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG Defs for Gradients -->
+<svg style="height: 0; width: 0; position: absolute; pointer-events: none;">
+    <defs>
+        <linearGradient id="skill-gradient-ios" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4FDDEB" />
+            <stop offset="50%" stop-color="#1769C2" />
+            <stop offset="100%" stop-color="#0A3D82" />
+        </linearGradient>
+    </defs>
+</svg>
+
+<!-- 3D Canvas Background -->
+<div class="liquid-wallpaper-container">
+    <canvas id="bg-canvas"></canvas>
+    <div class="bg-gradient-overlay"></div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-stage">
+    <nav class="ios-glass-nav" id="navbar">
+        <div class="nav-fluid-pill" id="navPill"></div>
+        
+        <a href="#hero" class="nav-item active">
+            <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="#about" class="nav-item">
+            <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span>About</span>
+        </a>
+        <a href="#skills" class="nav-item">
+            <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Skills</span>
+        </a>
+        <a href="#projects" class="nav-item">
+            <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span>Projects</span>
+        </a>
+        <a href="#contact" class="nav-item">
+            <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>Contact</span>
+        </a>
+    </nav>
+</div>
+
+<!-- HERO SECTION -->
+<section id="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-text-side">
+                <div class="hero-greeting reveal-node">
+                    WELCOME TO MY SPATIAL SPACE
+                </div>
+                <h1 class="hero-title reveal-node" style="transition-delay: 0.1s;">
+                    THADAPAN<br>SEINGYONG
+                </h1>
+                <p class="hero-subtitle reveal-node" style="transition-delay: 0.2s;">
+                    Hi, I'm <strong>ZACK</strong>. A passionate Programmer, Game Scripter, and Graphic Designer crafting digital experiences.
+                </p>
+                <div class="badges-container reveal-node" style="transition-delay: 0.3s;">
+                    <div class="interactive-glass-badge">
+                        <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2"/><path d="M18 5v17"/><path d="m4 6 8-4 8 4"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></svg>
+                        SAMROIYODWITTAYAKHOM
+                    </div>
+                    <div class="interactive-glass-badge">
+                        <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        M.4
+                    </div>
+                    <div class="interactive-glass-badge">
+                        <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                        นิเทศศิลป์
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-3d-stage reveal-node" style="transition-delay: 0.4s;" id="heroStage">
+                <div class="spatial-liquid-object" id="spatialObject">
+                    <div class="glass-layer layer-shadow"></div>
+                    <div class="glass-layer layer-outer-glass"></div>
+                    <div class="glass-layer layer-inner-core"></div>
+                    <div class="glass-layer layer-specular"></div>
+                    <div class="glass-layer layer-content-badge">
+                        <div class="spatial-core-icon-box">
+                            <svg class="spatial-core-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        </div>
+                        <div class="spatial-core-text">iOS 26 Engine</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about">
+    <div class="container">
+        <div class="section-header reveal-node">
+            <h2 class="section-subtitle">Biography</h2>
+            <h3 class="section-title">About Me</h3>
+        </div>
+        <div class="about-grid">
+            <div class="translucent-panel reveal-node">
+                <div class="about-text-content">
+                    <p>สวัสดีครับ ผม <strong>แซ็ค (Thadapan Seingyong)</strong> ปัจจุบันเรียนอยู่ชั้น ม.4 สายการเรียนนิเทศศิลป์ โรงเรียนสามร้อยยอดวิทยาคม</p>
+                    <p>ผมมีความหลงใหลในโลกของเทคโนโลยีเป็นพิเศษ โดยเฉพาะด้าน <strong>Programming, Game Coding, และการออกแบบ Infographic</strong> ผมสนุกกับการแก้ปัญหาทางตรรกะผ่านโค้ด และในขณะเดียวกันก็รักในการจัดวางองค์ประกอบศิลป์ให้สวยงาม</p>
+                    <p>เป้าหมายของผมคือการสร้างสรรค์ผลงานที่ผสมผสานระหว่าง "Logic" ของโปรแกรมมิ่ง และ "Aesthetic" ของศิลปะเข้าด้วยกัน เพื่อมอบประสบการณ์ที่ดีที่สุดให้กับผู้ใช้งาน</p>
+                </div>
+            </div>
+            
+            <div class="about-stats">
+                <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.1s;">
+                    <div class="stat-number">4+</div>
+                    <div class="stat-label">Years of Coding</div>
+                </div>
+                <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.2s;">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Projects Done</div>
+                </div>
+                <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.3s;">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Passion</div>
+                </div>
+                <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.4s;">
+                    <div class="stat-number">144</div>
+                    <div class="stat-label">Hz Precision Gamer</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SKILLS SECTION -->
+<section id="skills">
+    <div class="container skills-wrapper">
+        <div class="section-header reveal-node">
+            <h2 class="section-subtitle">Expertise</h2>
+            <h3 class="section-title">Skills & Capabilities</h3>
+        </div>
+        
+        <div class="skills-grid">
+            <div class="translucent-panel skill-card reveal-node">
+                <div class="skill-ring-container">
+                    <svg class="skill-ring-svg" viewBox="0 0 100 100">
+                        <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="90"></circle>
+                    </svg>
+                    <div class="skill-number">90%</div>
+                </div>
+                <div class="skill-label">Roblox Lua</div>
+                <div class="skill-desc">Advanced game mechanics & backend systems</div>
+            </div>
+
+            <div class="translucent-panel skill-card reveal-node" style="transition-delay: 0.1s;">
+                <div class="skill-ring-container">
+                    <svg class="skill-ring-svg" viewBox="0 0 100 100">
+                        <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="85"></circle>
+                    </svg>
+                    <div class="skill-number">85%</div>
+                </div>
+                <div class="skill-label">Web Dev</div>
+                <div class="skill-desc">HTML, CSS, JS, Spatial UI Design</div>
+            </div>
+
+            <div class="translucent-panel skill-card reveal-node" style="transition-delay: 0.2s;">
+                <div class="skill-ring-container">
+                    <svg class="skill-ring-svg" viewBox="0 0 100 100">
+                        <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="85"></circle>
+                    </svg>
+                    <div class="skill-number">85%</div>
+                </div>
+                <div class="skill-label">Infographic</div>
+                <div class="skill-desc">Visual communication & data layout</div>
+            </div>
+
+            <div class="translucent-panel skill-card reveal-node" style="transition-delay: 0.3s;">
+                <div class="skill-ring-container">
+                    <svg class="skill-ring-svg" viewBox="0 0 100 100">
+                        <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="95"></circle>
+                    </svg>
+                    <div class="skill-number">95%</div>
+                </div>
+                <div class="skill-label">Fast Typing</div>
+                <div class="skill-desc">High WPM for rapid development</div>
+            </div>
+            
+            <div class="translucent-panel skill-card reveal-node" style="transition-delay: 0.4s;">
+                <div class="skill-ring-container">
+                    <svg class="skill-ring-svg" viewBox="0 0 100 100">
+                        <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="100"></circle>
+                    </svg>
+                    <div class="skill-number">100%</div>
+                </div>
+                <div class="skill-label">Game Logic</div>
+                <div class="skill-desc">Deep understanding of game flow & UX</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TIMELINE SECTION -->
+<section id="experience">
+    <div class="container">
+        <div class="section-header reveal-node">
+            <h2 class="section-subtitle">Journey</h2>
+            <h3 class="section-title">Timeline & Experience</h3>
+        </div>
+        
+        <div class="timeline-container">
+            <div class="timeline-item reveal-node">
+                <div class="timeline-dot"></div>
+                <div class="translucent-panel timeline-content">
+                    <div class="timeline-date">2023 - Present</div>
+                    <div class="timeline-title">Freelance Game Developer (Roblox)</div>
+                    <div class="timeline-desc">ออกแบบและพัฒนาระบบเกมบนแพลตฟอร์ม Roblox ให้กับลูกค้ามากมาย ครอบคลุมตั้งแต่การเขียน Lua Script สำหรับระบบต่อสู้ (Combat System), ระบบบันทึกข้อมูล (Datastore), ไปจนถึงการออกแบบแผนที่แบบครบวงจร</div>
+                </div>
+            </div>
+            
+            <div class="timeline-item reveal-node">
+                <div class="timeline-dot"></div>
+                <div class="translucent-panel timeline-content">
+                    <div class="timeline-date">2022 - 2023</div>
+                    <div class="timeline-title">Graphic Designer (School Projects)</div>
+                    <div class="timeline-desc">รับหน้าที่ออกแบบสื่อสิ่งพิมพ์ Infographic, โปสเตอร์, และสื่อนำเสนอสำหรับกิจกรรมต่างๆ ภายในโรงเรียน โดยเน้นการจัดวางที่สวยงามและสื่อสารข้อมูลได้อย่างมีประสิทธิภาพตามสายการเรียนนิเทศศิลป์</div>
+                </div>
+            </div>
+            
+            <div class="timeline-item reveal-node">
+                <div class="timeline-dot"></div>
+                <div class="translucent-panel timeline-content">
+                    <div class="timeline-date">2021</div>
+                    <div class="timeline-title">Began Coding Journey</div>
+                    <div class="timeline-desc">เริ่มต้นศึกษาการเขียนโปรแกรมด้วยตัวเองผ่านอินเทอร์เน็ต เริ่มจาก HTML/CSS ขั้นพื้นฐาน ก่อนจะขยับไปสู่ JavaScript และ Lua เพื่อตอบสนองความชอบในการเล่นเกมและการสร้างเกม</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROJECTS SECTION -->
+<section id="projects">
+    <div class="container">
+        <div class="section-header reveal-node">
+            <h2 class="section-subtitle">Portfolio</h2>
+            <h3 class="section-title">Featured Projects</h3>
+        </div>
+        
+        <div class="projects-grid">
+            <div class="translucent-panel project-card reveal-node">
+                <div>
+                    <div class="project-header">
+                        <div class="project-icon-box">
+                            <svg class="project-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                        </div>
+                        <h3 class="project-title">Roblox Map Design</h3>
+                    </div>
+                    <p class="project-desc">ออกแบบและสร้างแผนที่ในเกม Roblox แบบ Full-scale เน้นรายละเอียดทางสถาปัตยกรรม แสงเงา (Lighting) และบรรยากาศภายในเกมเพื่อสร้างความสมจริงและประสบการณ์ที่ดีที่สุดของผู้เล่น</p>
+                </div>
+                <div class="project-footer">
+                    <span class="project-tag">Roblox Studio</span>
+                    <span class="project-tag">Level Design</span>
+                </div>
+            </div>
+
+            <div class="translucent-panel project-card reveal-node" style="transition-delay: 0.1s;">
+                <div>
+                    <div class="project-header">
+                        <div class="project-icon-box">
+                            <svg class="project-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                        </div>
+                        <h3 class="project-title">Advanced Systems Scripting</h3>
+                    </div>
+                    <p class="project-desc">เขียนโปรแกรมระบบซับซ้อนด้วย Lua เช่น Inventory System, Quest System, และ Combat Mechanics ที่รองรับผู้เล่นจำนวนมากพร้อมกันโดยไม่เกิดอาการ Lag</p>
+                </div>
+                <div class="project-footer">
+                    <span class="project-tag">Lua</span>
+                    <span class="project-tag">Backend</span>
+                    <span class="project-tag">OOP</span>
+                </div>
+            </div>
+
+            <div class="translucent-panel project-card reveal-node" style="transition-delay: 0.2s;">
+                <div>
+                    <div class="project-header">
+                        <div class="project-icon-box">
+                            <svg class="project-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <h3 class="project-title">"Cheat" Script (For Fun)</h3>
+                    </div>
+                    <p class="project-desc">โปรเจกต์ศึกษาเพื่อค้นหาจุดอ่อนของระบบ (Ethical Hacking ในระดับเบื้องต้น) ทำความเข้าใจวิธีการทำงานของ Exploit เพื่อนำมาเขียนระบบป้องกัน (Anti-cheat) ที่แข็งแกร่งขึ้น</p>
+                </div>
+                <div class="project-footer">
+                    <span class="project-tag">Security</span>
+                    <span class="project-tag">Exploit Research</span>
+                </div>
+            </div>
+            
+            <div class="translucent-panel project-card reveal-node" style="transition-delay: 0.3s;">
+                <div>
+                    <div class="project-header">
+                        <div class="project-icon-box">
+                            <svg class="project-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        </div>
+                        <h3 class="project-title">Spatial UI Interface</h3>
+                    </div>
+                    <p class="project-desc">ออกแบบและพัฒนา User Interface แนวใหม่สไตล์ Glassmorphism และ Spatial Computing ด้วย HTML, CSS, JavaScript แบบเพียวๆ ไร้ Framework เหมือนกับพอร์ตโฟลิโอเว็บนี้</p>
+                </div>
+                <div class="project-footer">
+                    <span class="project-tag">Frontend</span>
+                    <span class="project-tag">UI/UX</span>
+                    <span class="project-tag">Web Design</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ACTIVITIES & TRAITS SECTION -->
+<section id="activities">
+    <div class="container">
+        <div class="section-header reveal-node">
+            <h2 class="section-subtitle">Identity</h2>
+            <h3 class="section-title">Traits & Characteristics</h3>
+        </div>
+        
+        <div class="activities-grid">
+            <div class="translucent-panel activity-tile reveal-node">
+                <div class="activity-icon-wrap">
+                    <svg class="activity-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+                </div>
+                <div class="activity-info">
+                    <div class="activity-title">Hardcore Gamer</div>
+                    <div class="activity-sub">เข้าใจระบบและ Logic ของเกมอย่างถ่องแท้จากมุมมองของผู้เล่นจริง นำไปสู่การออกแบบระบบเกมที่ดีขึ้น</div>
+                </div>
+            </div>
+
+            <div class="translucent-panel activity-tile reveal-node" style="transition-delay: 0.1s;">
+                <div class="activity-icon-wrap">
+                    <svg class="activity-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><path d="M6 8h.001"/><path d="M10 8h.001"/><path d="M14 8h.001"/><path d="M18 8h.001"/><path d="M8 12h.001"/><path d="M12 12h.001"/><path d="M16 12h.001"/><path d="M7 16h10"/></svg>
+                </div>
+                <div class="activity-info">
+                    <div class="activity-title">Lightning Speed Typist</div>
+                    <div class="activity-sub">พิมพ์โค้ดและสื่อสารได้อย่างรวดเร็วมาก ช่วยลดระยะเวลาในการพัฒนาโปรเจกต์ได้อย่างมหาศาล</div>
+                </div>
+            </div>
+
+            <div class="translucent-panel activity-tile reveal-node" style="transition-delay: 0.2s;">
+                <div class="activity-icon-wrap">
+                    <svg class="activity-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div class="activity-info">
+                    <div class="activity-title">144Hz Precision</div>
+                    <div class="activity-sub">ตาไวและตอบสนองต่อการเคลื่อนไหวได้อย่างแม่นยำ มีประโยชน์ทั้งในการเล่นเกมและการหาจุดบั๊ก (Bug) บนหน้าจอ</div>
+                </div>
+            </div>
+
+            <div class="translucent-panel activity-tile reveal-node" style="transition-delay: 0.3s;">
+                <div class="activity-icon-wrap">
+                    <svg class="activity-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <div class="activity-info">
+                    <div class="activity-title">Passionate Coder</div>
+                    <div class="activity-sub">รักในการแก้ปัญหา ไม่ยอมแพ้เมื่อเจอบั๊กที่ท้าทาย และพร้อมเรียนรู้เทคโนโลยีใหม่ๆ ตลอดเวลา</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section id="contact">
+    <div class="container contact-wrapper">
+        <div class="translucent-panel contact-card reveal-node">
+            <svg class="contact-icon-large" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="contact-desc">สนใจพูดคุยแลกเปลี่ยนเรื่องโค้ดดิ้ง, การทำเกม, งานดีไซน์, หรือต้องการจ้างงาน<br>สามารถติดต่อผมได้ผ่านช่องทางด้านล่างนี้เลยครับ</p>
+            
+            <div class="contact-buttons">
+                <!-- Inline SVG Facebook (No Lucide dependency!) -->
+                <a href="https://facebook.com/thadapan.xi" target="_blank" class="ios-physics-btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    Facebook: Thadapan Xi
+                </a>
+                
+                <!-- Inline SVG Instagram (No Lucide dependency!) -->
+                <a href="https://instagram.com/zackthadapan" target="_blank" class="ios-physics-btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    Instagram: @zackthadapan
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <p class="footer-text">
+            Designed & Developed from scratch with <span class="footer-heart">♥</span> by <strong>Thadapan Seingyong (Zack)</strong>.<br>
+            No templates. No frameworks. Pure HTML, CSS, and JS OOP Physics Engine.<br>
+            © 2026 iOS 26 Liquid Spatial Space. All rights reserved.
+        </p>
+    </div>
+</footer>
+
+<script>
+/**
+ * ==============================================================================
+ * SPATIAL LIQUID ENGINE (OOP PHYSICS & 3D RENDERING)
+ * ==============================================================================
+ * This script handles all interactive elements, 3D transformations, scroll tracking,
+ * and a custom-built WebGL-like particle canvas system in 2D context.
+ */
+
+// --- UTILITIES & CONFIG ---
+const CONFIG = {
+    SPRING: {
+        STIFFNESS: 0.08,
+        DAMPING: 0.75
+    },
+    PARALLAX: {
+        STRENGTH: 0.08,
+        TILT_LIMIT: 25
+    },
+    CANVAS: {
+        PARTICLE_COUNT: window.innerWidth > 768 ? 120 : 60,
+        CONNECTION_DISTANCE: 150,
+        BASE_SPEED: 0.5
+    }
+};
+
+/**
+ * Custom Spring Physics Class
+ * Used for ultra-smooth Apple-like interpolations (Parallax, 3D Rotations)
+ */
+class SpringPhysics {
+    constructor(stiffness = CONFIG.SPRING.STIFFNESS, damping = CONFIG.SPRING.DAMPING) {
+        this.currentValueX = 0;
+        this.currentValueY = 0;
+        this.targetValueX = 0;
+        this.targetValueY = 0;
+        this.velocityXD = 0;
+        this.velocityYD = 0;
+        this.stiffness = stiffness;
+        this.damping = damping;
+    }
+    
+    update() {
+        // Calculate force based on Hooke's Law: F = -k * x
+        let deltaX = this.targetValueX - this.currentValueX;
+        let deltaY = this.targetValueY - this.currentValueY;
+        
+        // Apply spring force to velocity and damp it
+        this.velocityXD = (this.velocityXD + deltaX * this.stiffness) * this.damping;
+        this.velocityYD = (this.velocityYD + deltaY * this.stiffness) * this.damping;
+        
+        // Apply velocity to current position
+        this.currentValueX += this.velocityXD;
+        this.currentValueY += this.velocityYD;
+    }
+    
+    setTarget(x, y) {
+        this.targetValueX = x;
+        this.targetValueY = y;
+    }
+}
+
+// --- GLOBAL STATE ---
+let PointerState = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+    rawX: window.innerWidth / 2,
+    rawY: window.innerHeight / 2,
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0
+};
+
+// Instantiating Springs
+const ParallaxSpring = new SpringPhysics(0.04, 0.85);
+const HeroDragSpring = new SpringPhysics(0.1, 0.72);
+const NavPillSpring = new SpringPhysics(0.12, 0.78);
+
+// --- DOM ELEMENTS ---
+const Elements = {
+    html: document.documentElement,
+    heroStage: document.getElementById('heroStage'),
+    spatialObject: document.getElementById('spatialObject'),
+    navbar: document.getElementById('navbar'),
+    navPill: document.getElementById('navPill'),
+    navItems: document.querySelectorAll('.nav-item'),
+    panels: document.querySelectorAll('.translucent-panel'),
+    revealNodes: document.querySelectorAll('.reveal-node'),
+    skillRings: document.querySelectorAll('.skill-ring-progress'),
+    canvas: document.getElementById('bg-canvas')
+};
+
+/**
+ * ==============================================================================
+ * ADVANCED CANVAS PARTICLE SYSTEM (BACKGROUND)
+ * ==============================================================================
+ */
+const ctx = Elements.canvas.getContext('2d');
+let ParticlesArray = [];
+
+class Vector2D {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    add(vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+    }
+    sub(vector) {
+        this.x -= vector.x;
+        this.y -= vector.y;
+    }
+}
+
+class SpatialParticle {
+    constructor() {
+        this.pos = new Vector2D(
+            Math.random() * Elements.canvas.width,
+            Math.random() * Elements.canvas.height
+        );
+        this.vel = new Vector2D(
+            (Math.random() - 0.5) * CONFIG.CANVAS.BASE_SPEED,
+            (Math.random() - 0.5) * CONFIG.CANVAS.BASE_SPEED
+        );
+        this.size = Math.random() * 3 + 1;
+        
+        // Blueish colors for OLED background
+        const colors = ['#4FDDEB', '#1769C2', '#DDFBFF', '#0A3D82'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.baseOpacity = Math.random() * 0.5 + 0.1;
+    }
+
+    update() {
+        // Move particle
+        this.pos.add(this.vel);
+        
+        // Bounce off edges
+        if (this.pos.x < 0 || this.pos.x > Elements.canvas.width) this.vel.x *= -1;
+        if (this.pos.y < 0 || this.pos.y > Elements.canvas.height) this.vel.y *= -1;
+        
+        // Mouse interaction (Repel)
+        let dx = PointerState.rawX - this.pos.x;
+        let dy = PointerState.rawY - this.pos.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 150) {
+            let forceDirectionX = dx / distance;
+            let forceDirectionY = dy / distance;
+            let force = (150 - distance) / 150;
+            this.pos.x -= forceDirectionX * force * 2;
+            this.pos.y -= forceDirectionY * force * 2;
+        }
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.pos.x, this.pos.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.baseOpacity;
+        ctx.fill();
+        ctx.globalAlpha = 1; // reset
+    }
+}
+
+function initCanvas() {
+    Elements.canvas.width = window.innerWidth;
+    Elements.canvas.height = window.innerHeight;
+    ParticlesArray = [];
+    for (let i = 0; i < CONFIG.CANVAS.PARTICLE_COUNT; i++) {
+        ParticlesArray.push(new SpatialParticle());
+    }
+}
+
+function renderCanvasConnections() {
+    for (let a = 0; a < ParticlesArray.length; a++) {
+        for (let b = a; b < ParticlesArray.length; b++) {
+            let dx = ParticlesArray[a].pos.x - ParticlesArray[b].pos.x;
+            let dy = ParticlesArray[a].pos.y - ParticlesArray[b].pos.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < CONFIG.CANVAS.CONNECTION_DISTANCE) {
+                let opacityValue = 1 - (distance / CONFIG.CANVAS.CONNECTION_DISTANCE);
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(79, 221, 235, ${opacityValue * 0.2})`;
+                ctx.lineWidth = 1;
+                ctx.moveTo(ParticlesArray[a].pos.x, ParticlesArray[a].pos.y);
+                ctx.lineTo(ParticlesArray[b].pos.x, ParticlesArray[b].pos.y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animateCanvas() {
+    ctx.clearRect(0, 0, Elements.canvas.width, Elements.canvas.height);
+    for (let i = 0; i < ParticlesArray.length; i++) {
+        ParticlesArray[i].update();
+        ParticlesArray[i].draw();
+    }
+    renderCanvasConnections();
+}
+
+/**
+ * ==============================================================================
+ * INTERACTION HANDLERS (POINTER & DRAG)
+ * ==============================================================================
+ */
+function handlePointerMove(e) {
+    let events = [e];
+    if (e.getCoalescedEvents) events = e.getCoalescedEvents();
+    
+    for (let ev of events) {
+        PointerState.rawX = ev.clientX;
+        PointerState.rawY = ev.clientY;
+    }
+
+    if (PointerState.isDragging && Elements.heroStage) {
+        HeroDragSpring.setTarget(
+            PointerState.rawX - PointerState.dragStartX,
+            PointerState.rawY - PointerState.dragStartY
+        );
+    }
+}
+
+window.addEventListener('pointermove', handlePointerMove, { passive: true });
+
+if (Elements.heroStage) {
+    Elements.heroStage.addEventListener('pointerdown', (e) => {
+        PointerState.isDragging = true;
+        PointerState.dragStartX = e.clientX - HeroDragSpring.currentValueX;
+        PointerState.dragStartY = e.clientY - HeroDragSpring.currentValueY;
+        Elements.heroStage.setPointerCapture(e.pointerId);
+    });
+
+    const stopDragging = () => {
+        PointerState.isDragging = false;
+        HeroDragSpring.setTarget(0, 0); // Return to center
+    };
+
+    Elements.heroStage.addEventListener('pointerup', stopDragging);
+    Elements.heroStage.addEventListener('pointercancel', stopDragging);
+}
+
+// Button physics micro-interactions
+document.querySelectorAll('.ios-physics-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', () => btn.style.transform = 'scale(0.94)');
+    btn.addEventListener('pointerup', () => btn.style.transform = 'scale(1)');
+    btn.addEventListener('pointerleave', () => btn.style.transform = 'scale(1)');
+});
+
+/**
+ * ==============================================================================
+ * NAVIGATION & SCROLL LOGIC
+ * ==============================================================================
+ */
+function updateNavPillTarget(activeElement) {
+    if (!activeElement || !Elements.navPill) return;
+    NavPillSpring.setTarget(activeElement.offsetLeft, 0);
+    Elements.navPill.style.width = `${activeElement.offsetWidth}px`;
+}
+
+// Initial Pill Setup
+const initActiveNav = document.querySelector('.nav-item.active');
+if (initActiveNav) {
+    updateNavPillTarget(initActiveNav);
+    NavPillSpring.currentValueX = initActiveNav.offsetLeft;
+}
+
+// Compact Navbar on Scroll
+window.addEventListener('scroll', () => {
+    if (!Elements.navbar) return;
+    if (window.scrollY > 80) {
+        Elements.navbar.classList.add('compact');
+    } else {
+        Elements.navbar.classList.remove('compact');
+    }
+}, { passive: true });
+
+/**
+ * ==============================================================================
+ * MAIN PHYSICS RENDER LOOP (REQUEST ANIMATION FRAME)
+ * ==============================================================================
+ */
+function mainEngineLoop() {
+    // 1. Calculate Global Parallax Target based on pointer from center of screen
+    let centerX = window.innerWidth / 2;
+    let centerY = window.innerHeight / 2;
+    ParallaxSpring.setTarget(
+        (PointerState.rawX - centerX) * CONFIG.PARALLAX.STRENGTH,
+        (PointerState.rawY - centerY) * CONFIG.PARALLAX.STRENGTH
+    );
+    ParallaxSpring.update();
+
+    // Apply global CSS parallax variables
+    Elements.html.style.setProperty('--parallax-x', `${ParallaxSpring.currentValueX}px`);
+    Elements.html.style.setProperty('--parallax-y', `${ParallaxSpring.currentValueY}px`);
+
+    // 2. Update Hero 3D Object Drag Physics
+    HeroDragSpring.update();
+    if (Elements.spatialObject) {
+        const rotX = -HeroDragSpring.currentValueY * 0.3;
+        const rotY = HeroDragSpring.currentValueX * 0.3;
+        
+        // Limit rotation angles for safety
+        const clampedRotX = Math.max(Math.min(rotX, CONFIG.PARALLAX.TILT_LIMIT), -CONFIG.PARALLAX.TILT_LIMIT);
+        const clampedRotY = Math.max(Math.min(rotY, CONFIG.PARALLAX.TILT_LIMIT), -CONFIG.PARALLAX.TILT_LIMIT);
+        
+        Elements.spatialObject.style.transform = 
+            `translate3d(${HeroDragSpring.currentValueX}px, ${HeroDragSpring.currentValueY}px, 0px) ` +
+            `rotateX(${clampedRotX}deg) rotateY(${clampedRotY}deg)`;
+            
+        // Calculate Specular Light reflection map
+        Elements.spatialObject.style.setProperty('--spec-x', `${50 + HeroDragSpring.currentValueX * 0.2}%`);
+        Elements.spatialObject.style.setProperty('--spec-y', `${50 + HeroDragSpring.currentValueY * 0.2}%`);
+    }
+
+    // 3. Update Navigation Pill Spring
+    NavPillSpring.update();
+    if (Elements.navPill) {
+        Elements.navPill.style.transform = `translateX(${NavPillSpring.currentValueX}px)`;
+    }
+
+    // 4. Update Translucent Panels Hover (Radial Gradient Tracker)
+    Elements.panels.forEach(panel => {
+        const rect = panel.getBoundingClientRect();
+        // Only calculate if panel is inside viewport
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            const relX = ((PointerState.rawX - rect.left) / rect.width) * 100;
+            const relY = ((PointerState.rawY - rect.top) / rect.height) * 100;
+            panel.style.setProperty('--card-px', `${relX}%`);
+            panel.style.setProperty('--card-py', `${relY}%`);
+        }
+    });
+    
+    // 5. Render Canvas Background
+    animateCanvas();
+
+    // Request next frame
+    requestAnimationFrame(mainEngineLoop);
+}
+
+/**
+ * ==============================================================================
+ * INTERSECTION OBSERVERS (SCROLL REVEAL & NAV SYNC)
+ * ==============================================================================
+ */
+// Observer for Navigation Sync & Skill Rings Animation
+const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            
+            // Sync Navigation
+            Elements.navItems.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${id}`) {
+                    link.classList.add('active');
+                    updateNavPillTarget(link);
+                }
+            });
+
+            // Trigger Skill Ring Animation if it's the skills section
+            if (id === 'skills') {
+                Elements.skillRings.forEach(ring => {
+                    const percent = ring.getAttribute('data-percent');
+                    const circumference = 283; // 2 * pi * r (45)
+                    const offset = circumference - (circumference * percent) / 100;
+                    ring.style.strokeDashoffset = offset;
+                });
+            }
+        }
+    });
+}, { threshold: 0.25 });
+
+document.querySelectorAll('section').forEach(sec => sectionObserver.observe(sec));
+
+// Observer for Elements Reveal (Fade In + Slide Up)
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            // Unobserve after revealing for performance
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { 
+    threshold: 0.1, 
+    rootMargin: "0px 0px -50px 0px" 
+});
+
+Elements.revealNodes.forEach(node => revealObserver.observe(node));
+
+/**
+ * ==============================================================================
+ * WINDOW EVENTS & INITIALIZATION
+ * ==============================================================================
+ */
+window.addEventListener('resize', () => {
+    // Re-initialize Canvas Size
+    initCanvas();
+    
+    // Update active nav pill position
+    const active = document.querySelector('.nav-item.active');
+    if (active) updateNavPillTarget(active);
+});
+
+// Boot the engine
+window.onload = () => {
+    initCanvas();
+    requestAnimationFrame(mainEngineLoop);
+};
+</script>
+</body>
+</html>
