@@ -32,9 +32,7 @@
 >
 
 <style>
-/* ==========================================================================
-   CSS VARIABLES & THEMING
-   ========================================================================== */
+/* CSS VARIABLES & THEMING */
 :root {
     /* Color Palette - Spatial Dark Mode */
     --oled-black: #02050A;
@@ -81,9 +79,7 @@
     --smooth-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ==========================================================================
-   RESET & BASE STYLES
-   ========================================================================== */
+/* RESET & BASE STYLES */
 * {
     margin: 0;
     padding: 0;
@@ -129,9 +125,7 @@ ul, ol {
     list-style: none;
 }
 
-/* ==========================================================================
-   BACKGROUND & CANVAS SYSTEM
-   ========================================================================== */
+/* BACKGROUND & CANVAS SYSTEM */
 .liquid-wallpaper-container {
     position: fixed;
     top: 0;
@@ -171,9 +165,7 @@ ul, ol {
     mix-blend-mode: multiply;
 }
 
-/* ==========================================================================
-   NAVIGATION (GLASS PILL)
-   ========================================================================== */
+/* NAVIGATION (GLASS PILL) */
 .nav-stage {
     position: fixed;
     top: 24px;
@@ -267,9 +259,7 @@ ul, ol {
     height: 14px;
 }
 
-/* ==========================================================================
-   LAYOUT & SECTIONS
-   ========================================================================== */
+/* LAYOUT & SECTIONS */
 section {
     min-height: 100vh;
     padding: var(--section-pad-y) var(--section-pad-x);
@@ -321,9 +311,7 @@ section {
     text-transform: uppercase;
 }
 
-/* ==========================================================================
-   TRANSLUCENT PANELS (GLASS CARDS)
-   ========================================================================== */
+/* TRANSLUCENT PANELS (GLASS CARDS) */
 .translucent-panel {
     position: relative;
     background: var(--glass-surface-1);
@@ -372,20 +360,18 @@ section {
     opacity: 1;
 }
 
-/* ==========================================================================
-   HERO SECTION
-   ========================================================================== */
+/* HERO SECTION */
 .hero-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 60px;
-    align-items: center;
+    display: flex;
+    justify-content: center;
     width: 100%;
 }
 
 .hero-text-side {
     position: relative;
     z-index: 2;
+    max-width: 700px;
+    text-align: center;
     transform: translate3d(
         calc(var(--parallax-x) * 1.5), 
         calc(var(--parallax-y) * 1.5), 
@@ -402,15 +388,8 @@ section {
     text-transform: uppercase;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
-}
-
-.hero-greeting::before {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 2px;
-    background: var(--aqua-soft);
 }
 
 .hero-title {
@@ -434,7 +413,7 @@ section {
     font-size: clamp(1.2rem, 2.5vw, 1.8rem);
     font-weight: 400;
     color: var(--text-secondary);
-    margin-bottom: 40px;
+    margin: 0 auto 40px auto;
     max-width: 600px;
     line-height: 1.5;
 }
@@ -447,6 +426,7 @@ section {
 /* Badges */
 .badges-container {
     display: flex;
+    justify-content: center;
     gap: 16px;
     flex-wrap: wrap;
 }
@@ -487,138 +467,7 @@ section {
     color: var(--cyan-bright);
 }
 
-/* Hero 3D Object */
-.hero-3d-stage {
-    position: relative;
-    height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    perspective: 1200px;
-    touch-action: none;
-    cursor: grab;
-}
-
-.hero-3d-stage:active {
-    cursor: grabbing;
-}
-
-.spatial-liquid-object {
-    position: relative;
-    width: 320px;
-    height: 320px;
-    transform-style: preserve-3d;
-    will-change: transform;
-}
-
-.glass-layer {
-    position: absolute;
-    inset: 0;
-    border-radius: 56px;
-    pointer-events: none;
-}
-
-.layer-shadow {
-    background: rgba(2, 5, 10, 0.8);
-    filter: blur(40px);
-    transform: translateZ(-80px) scale(0.85);
-}
-
-.layer-outer-glass {
-    background: linear-gradient(
-        135deg, 
-        rgba(255, 255, 255, 0.15), 
-        rgba(10, 61, 130, 0.1)
-    );
-    backdrop-filter: blur(30px) saturate(200%);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 
-        inset 0 2px 4px rgba(255, 255, 255, 0.5), 
-        inset 0 -4px 10px rgba(10, 61, 130, 0.4), 
-        0 30px 60px rgba(2, 5, 10, 0.8);
-    transform: translateZ(0px);
-}
-
-.layer-inner-core {
-    inset: 40px;
-    border-radius: 40px;
-    background: linear-gradient(
-        135deg, 
-        var(--apple-blue), 
-        var(--cyan-bright)
-    );
-    opacity: 0.5;
-    filter: blur(16px);
-    transform: translateZ(40px);
-    animation: pulse-core 4s infinite alternate ease-in-out;
-}
-
-@keyframes pulse-core {
-    0% { opacity: 0.4; transform: translateZ(40px) scale(0.95); }
-    100% { opacity: 0.7; transform: translateZ(40px) scale(1.05); }
-}
-
-.layer-specular {
-    inset: 0;
-    border-radius: 56px;
-    background: radial-gradient(
-        circle at var(--spec-x, 30%) var(--spec-y, 30%),
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(255, 255, 255, 0.2) 25%,
-        transparent 50%
-    );
-    mix-blend-mode: overlay;
-    transform: translateZ(60px);
-}
-
-.layer-content-badge {
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    transform: translateZ(90px);
-}
-
-.spatial-core-icon-box {
-    width: 80px;
-    height: 80px;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ice-white);
-    box-shadow: 
-        0 15px 30px rgba(0, 0, 0, 0.4),
-        inset 0 2px 5px rgba(255,255,255,0.5);
-}
-
-.spatial-core-icon {
-    width: 40px;
-    height: 40px;
-}
-
-.spatial-core-text {
-    font-family: var(--font-primary);
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: #FFFFFF;
-    text-transform: uppercase;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
-    background: rgba(0,0,0,0.3);
-    padding: 6px 16px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-}
-
-/* ==========================================================================
-   ABOUT SECTION
-   ========================================================================== */
+/* ABOUT SECTION */
 .about-grid {
     max-width: 1000px;
     width: 100%;
@@ -679,9 +528,7 @@ section {
     letter-spacing: 0.05em;
 }
 
-/* ==========================================================================
-   SKILLS SECTION (Expanded)
-   ========================================================================== */
+/* SKILLS SECTION (Expanded) */
 .skills-wrapper {
     width: 100%;
     max-width: 1200px;
@@ -756,9 +603,7 @@ section {
     line-height: 1.4;
 }
 
-/* ==========================================================================
-   TIMELINE / EXPERIENCE SECTION
-   ========================================================================== */
+/* TIMELINE / EXPERIENCE SECTION */
 .timeline-container {
     max-width: 900px;
     width: 100%;
@@ -832,9 +677,7 @@ section {
     line-height: 1.6;
 }
 
-/* ==========================================================================
-   PROJECTS SECTION (Expanded)
-   ========================================================================== */
+/* PROJECTS SECTION (Expanded) */
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -914,9 +757,7 @@ section {
     font-family: var(--font-primary);
 }
 
-/* ==========================================================================
-   ACTIVITIES SECTION
-   ========================================================================== */
+/* ACTIVITIES SECTION */
 .activities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -967,9 +808,7 @@ section {
     line-height: 1.5;
 }
 
-/* ==========================================================================
-   CONTACT SECTION & BUTTONS
-   ========================================================================== */
+/* CONTACT SECTION & BUTTONS */
 .contact-wrapper {
     width: 100%;
     max-width: 800px;
@@ -1080,9 +919,7 @@ section {
     height: 24px;
 }
 
-/* ==========================================================================
-   FOOTER
-   ========================================================================== */
+/* FOOTER */
 footer {
     padding: 60px 20px;
     text-align: center;
@@ -1108,9 +945,7 @@ footer {
     50% { transform: scale(1.2); }
 }
 
-/* ==========================================================================
-   ANIMATIONS & REVEAL SYSTEM
-   ========================================================================== */
+/* ANIMATIONS & REVEAL SYSTEM */
 .reveal-node {
     opacity: 0;
     transform: translate3d(0, 60px, 0) scale(0.95);
@@ -1127,9 +962,7 @@ footer {
     filter: blur(0);
 }
 
-/* ==========================================================================
-   MEDIA QUERIES (RESPONSIVE)
-   ========================================================================== */
+/* MEDIA QUERIES (RESPONSIVE) */
 @media (max-width: 1024px) {
     .about-grid { grid-template-columns: 1fr; }
     .hero-title { font-size: 4rem; }
@@ -1148,8 +981,6 @@ footer {
     }
     .hero-greeting::before { display: none; }
     .badges-container { justify-content: center; }
-    .hero-3d-stage { height: 400px; }
-    .spatial-liquid-object { width: 260px; height: 260px; }
     
     .timeline-container::before { left: 30px; }
     .timeline-dot { left: 21px; }
@@ -1244,21 +1075,6 @@ footer {
                     <div class="interactive-glass-badge">
                         <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
                         นิเทศศิลป์
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-3d-stage reveal-node" style="transition-delay: 0.4s;" id="heroStage">
-                <div class="spatial-liquid-object" id="spatialObject">
-                    <div class="glass-layer layer-shadow"></div>
-                    <div class="glass-layer layer-outer-glass"></div>
-                    <div class="glass-layer layer-inner-core"></div>
-                    <div class="glass-layer layer-specular"></div>
-                    <div class="glass-layer layer-content-badge">
-                        <div class="spatial-core-icon-box">
-                            <svg class="spatial-core-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                        </div>
-                        <div class="spatial-core-text">iOS 26 Engine</div>
                     </div>
                 </div>
             </div>
@@ -1582,15 +1398,10 @@ footer {
 </footer>
 
 <script>
-/**
- * ==============================================================================
- * SPATIAL LIQUID ENGINE (OOP PHYSICS & 3D RENDERING)
- * ==============================================================================
- * This script handles all interactive elements, 3D transformations, scroll tracking,
- * and a custom-built WebGL-like particle canvas system in 2D context.
- */
+// Handles pointer/parallax physics, the hero 3D drag object, nav pill animation,
+// scroll reveal, and a small canvas particle background.
 
-// --- UTILITIES & CONFIG ---
+// UTILITIES & CONFIG
 const CONFIG = {
     SPRING: {
         STIFFNESS: 0.08,
@@ -1643,27 +1454,21 @@ class SpringPhysics {
     }
 }
 
-// --- GLOBAL STATE ---
+// GLOBAL STATE
 let PointerState = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
     rawX: window.innerWidth / 2,
-    rawY: window.innerHeight / 2,
-    isDragging: false,
-    dragStartX: 0,
-    dragStartY: 0
+    rawY: window.innerHeight / 2
 };
 
 // Instantiating Springs
 const ParallaxSpring = new SpringPhysics(0.04, 0.85);
-const HeroDragSpring = new SpringPhysics(0.1, 0.72);
 const NavPillSpring = new SpringPhysics(0.12, 0.78);
 
-// --- DOM ELEMENTS ---
+// DOM ELEMENTS
 const Elements = {
     html: document.documentElement,
-    heroStage: document.getElementById('heroStage'),
-    spatialObject: document.getElementById('spatialObject'),
     navbar: document.getElementById('navbar'),
     navPill: document.getElementById('navPill'),
     navItems: document.querySelectorAll('.nav-item'),
@@ -1673,11 +1478,7 @@ const Elements = {
     canvas: document.getElementById('bg-canvas')
 };
 
-/**
- * ==============================================================================
- * ADVANCED CANVAS PARTICLE SYSTEM (BACKGROUND)
- * ==============================================================================
- */
+// ADVANCED CANVAS PARTICLE SYSTEM (BACKGROUND)
 const ctx = Elements.canvas.getContext('2d');
 let ParticlesArray = [];
 
@@ -1784,46 +1585,18 @@ function animateCanvas() {
     renderCanvasConnections();
 }
 
-/**
- * ==============================================================================
- * INTERACTION HANDLERS (POINTER & DRAG)
- * ==============================================================================
- */
+// INTERACTION HANDLERS (POINTER)
 function handlePointerMove(e) {
     let events = [e];
     if (e.getCoalescedEvents) events = e.getCoalescedEvents();
-    
+
     for (let ev of events) {
         PointerState.rawX = ev.clientX;
         PointerState.rawY = ev.clientY;
     }
-
-    if (PointerState.isDragging && Elements.heroStage) {
-        HeroDragSpring.setTarget(
-            PointerState.rawX - PointerState.dragStartX,
-            PointerState.rawY - PointerState.dragStartY
-        );
-    }
 }
 
 window.addEventListener('pointermove', handlePointerMove, { passive: true });
-
-if (Elements.heroStage) {
-    Elements.heroStage.addEventListener('pointerdown', (e) => {
-        PointerState.isDragging = true;
-        PointerState.dragStartX = e.clientX - HeroDragSpring.currentValueX;
-        PointerState.dragStartY = e.clientY - HeroDragSpring.currentValueY;
-        Elements.heroStage.setPointerCapture(e.pointerId);
-    });
-
-    const stopDragging = () => {
-        PointerState.isDragging = false;
-        HeroDragSpring.setTarget(0, 0); // Return to center
-    };
-
-    Elements.heroStage.addEventListener('pointerup', stopDragging);
-    Elements.heroStage.addEventListener('pointercancel', stopDragging);
-}
 
 // Button physics micro-interactions
 document.querySelectorAll('.ios-physics-btn').forEach(btn => {
@@ -1832,11 +1605,7 @@ document.querySelectorAll('.ios-physics-btn').forEach(btn => {
     btn.addEventListener('pointerleave', () => btn.style.transform = 'scale(1)');
 });
 
-/**
- * ==============================================================================
- * NAVIGATION & SCROLL LOGIC
- * ==============================================================================
- */
+// NAVIGATION & SCROLL LOGIC
 function updateNavPillTarget(activeElement) {
     if (!activeElement || !Elements.navPill) return;
     NavPillSpring.setTarget(activeElement.offsetLeft, 0);
@@ -1860,11 +1629,7 @@ window.addEventListener('scroll', () => {
     }
 }, { passive: true });
 
-/**
- * ==============================================================================
- * MAIN PHYSICS RENDER LOOP (REQUEST ANIMATION FRAME)
- * ==============================================================================
- */
+// MAIN PHYSICS RENDER LOOP (REQUEST ANIMATION FRAME)
 function mainEngineLoop() {
     // 1. Calculate Global Parallax Target based on pointer from center of screen
     let centerX = window.innerWidth / 2;
@@ -1879,32 +1644,13 @@ function mainEngineLoop() {
     Elements.html.style.setProperty('--parallax-x', `${ParallaxSpring.currentValueX}px`);
     Elements.html.style.setProperty('--parallax-y', `${ParallaxSpring.currentValueY}px`);
 
-    // 2. Update Hero 3D Object Drag Physics
-    HeroDragSpring.update();
-    if (Elements.spatialObject) {
-        const rotX = -HeroDragSpring.currentValueY * 0.3;
-        const rotY = HeroDragSpring.currentValueX * 0.3;
-        
-        // Limit rotation angles for safety
-        const clampedRotX = Math.max(Math.min(rotX, CONFIG.PARALLAX.TILT_LIMIT), -CONFIG.PARALLAX.TILT_LIMIT);
-        const clampedRotY = Math.max(Math.min(rotY, CONFIG.PARALLAX.TILT_LIMIT), -CONFIG.PARALLAX.TILT_LIMIT);
-        
-        Elements.spatialObject.style.transform = 
-            `translate3d(${HeroDragSpring.currentValueX}px, ${HeroDragSpring.currentValueY}px, 0px) ` +
-            `rotateX(${clampedRotX}deg) rotateY(${clampedRotY}deg)`;
-            
-        // Calculate Specular Light reflection map
-        Elements.spatialObject.style.setProperty('--spec-x', `${50 + HeroDragSpring.currentValueX * 0.2}%`);
-        Elements.spatialObject.style.setProperty('--spec-y', `${50 + HeroDragSpring.currentValueY * 0.2}%`);
-    }
-
-    // 3. Update Navigation Pill Spring
+    // 2. Update Navigation Pill Spring
     NavPillSpring.update();
     if (Elements.navPill) {
         Elements.navPill.style.transform = `translateX(${NavPillSpring.currentValueX}px)`;
     }
 
-    // 4. Update Translucent Panels Hover (Radial Gradient Tracker)
+    // 3. Update Translucent Panels Hover (Radial Gradient Tracker)
     Elements.panels.forEach(panel => {
         const rect = panel.getBoundingClientRect();
         // Only calculate if panel is inside viewport
@@ -1916,18 +1662,14 @@ function mainEngineLoop() {
         }
     });
     
-    // 5. Render Canvas Background
+    // 4. Render Canvas Background
     animateCanvas();
 
     // Request next frame
     requestAnimationFrame(mainEngineLoop);
 }
 
-/**
- * ==============================================================================
- * INTERSECTION OBSERVERS (SCROLL REVEAL & NAV SYNC)
- * ==============================================================================
- */
+// INTERSECTION OBSERVERS (SCROLL REVEAL & NAV SYNC)
 // Observer for Navigation Sync & Skill Rings Animation
 const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -1974,11 +1716,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 Elements.revealNodes.forEach(node => revealObserver.observe(node));
 
-/**
- * ==============================================================================
- * WINDOW EVENTS & INITIALIZATION
- * ==============================================================================
- */
+// WINDOW EVENTS & INITIALIZATION
 window.addEventListener('resize', () => {
     // Re-initialize Canvas Size
     initCanvas();
