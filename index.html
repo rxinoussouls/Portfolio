@@ -27,7 +27,7 @@
   crossorigin
 >
 <link 
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" 
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Kanit:wght@300;400;500;600;700&display=swap" 
   rel="stylesheet"
 >
 
@@ -67,7 +67,7 @@
     
     /* Typography */
     --font-primary: 'Inter', sans-serif;
-    --font-secondary: 'Prompt', sans-serif;
+    --font-secondary: 'Kanit', sans-serif;
     
     /* Layout */
     --container-max: 1200px;
@@ -153,6 +153,61 @@ ul, ol {
     opacity: 0.8;
 }
 
+.bg-aurora {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.aurora-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    will-change: transform;
+}
+
+.aurora-blob-1 {
+    width: 480px;
+    height: 480px;
+    top: -10%;
+    left: 8%;
+    background: radial-gradient(circle, rgba(79, 221, 235, 0.5), transparent 70%);
+    animation: driftOne 22s ease-in-out infinite;
+}
+
+.aurora-blob-2 {
+    width: 560px;
+    height: 560px;
+    bottom: -18%;
+    right: 2%;
+    background: radial-gradient(circle, rgba(23, 105, 194, 0.5), transparent 70%);
+    animation: driftTwo 28s ease-in-out infinite;
+}
+
+.aurora-blob-3 {
+    width: 380px;
+    height: 380px;
+    top: 42%;
+    left: 55%;
+    background: radial-gradient(circle, rgba(116, 231, 208, 0.35), transparent 70%);
+    animation: driftThree 34s ease-in-out infinite;
+}
+
+@keyframes driftOne {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(70px, 90px) scale(1.15); }
+}
+
+@keyframes driftTwo {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-80px, -60px) scale(1.1); }
+}
+
+@keyframes driftThree {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, 70px) scale(0.9); }
+}
+
 .bg-gradient-overlay {
     position: absolute;
     inset: 0;
@@ -173,8 +228,14 @@ ul, ol {
         linear-gradient(to right, #ffffff 1px, transparent 1px),
         linear-gradient(to bottom, #ffffff 1px, transparent 1px);
     background-size: 40px 40px;
+    animation: gridDrift 70s linear infinite;
     -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 40%, transparent 100%);
     mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 40%, transparent 100%);
+}
+
+@keyframes gridDrift {
+    from { background-position: 0 0; }
+    to { background-position: 400px 400px; }
 }
 
 /* NAVIGATION (GLASS PILL) */
@@ -1008,6 +1069,11 @@ footer {
 <!-- 3D Canvas Background -->
 <div class="liquid-wallpaper-container">
     <canvas id="bg-canvas"></canvas>
+    <div class="bg-aurora">
+        <div class="aurora-blob aurora-blob-1"></div>
+        <div class="aurora-blob aurora-blob-2"></div>
+        <div class="aurora-blob aurora-blob-3"></div>
+    </div>
     <div class="bg-gradient-overlay"></div>
     <div class="bg-grid-layer"></div>
 </div>
@@ -1087,8 +1153,8 @@ footer {
             <div class="translucent-panel reveal-node">
                 <div class="about-text-content">
                     <p>สวัสดีครับ ผม <strong>แซ็ก (Thadapan Seingyong)</strong> ปัจจุบันเรียนอยู่ชั้น ม.4 สายการเรียนนิเทศศิลป์ โรงเรียนสามร้อยยอดวิทยาคม</p>
-                    <p>ผมสนใจด้าน <strong>Programming, Game Coding, และการออกแบบ Infographic</strong> ชอบลองแก้ปัญหาผ่านโค้ด และชอบจัดวางองค์ประกอบให้ดูดี</p>
-                    <p>อยากพัฒนาฝีมือทั้งด้าน Logic ของโปรแกรมมิ่ง และ Aesthetic ของงานออกแบบไปเรื่อยๆ ครับ</p>
+                    <p>ผมสนใจด้าน <strong>Programming, Game Coding, และการออกแบบ Infographic</strong> ชอบนั่งไล่แก้บั๊กตอนเขียนโค้ด แล้วก็ชอบจัดหน้าจัดองค์ประกอบให้มันดูดีด้วย</p>
+                    <p>อยากพัฒนาตัวเองไปเรื่อยๆ ทั้งฝั่ง Logic ของการเขียนโปรแกรม และฝั่ง Aesthetic ของงานดีไซน์ครับ</p>
                 </div>
             </div>
             
@@ -1200,7 +1266,7 @@ footer {
                 <div class="translucent-panel timeline-content">
                     <div class="timeline-date">2023 - Present</div>
                     <div class="timeline-title">Freelance Graphic & Web Designer</div>
-                    <div class="timeline-desc">รับงานออกแบบโปสเตอร์ Infographic และเว็บไซต์เล็กๆ ให้กับรุ่นพี่และเพื่อนในโรงเรียน ตั้งแต่งานสื่อสิ่งพิมพ์ไปจนถึงหน้าเว็บด้วย HTML/CSS/JS</div>
+                    <div class="timeline-desc">รับออกแบบโปสเตอร์ Infographic และทำเว็บเล็กๆ ให้รุ่นพี่กับเพื่อนในโรงเรียน ตั้งแต่งานสิ่งพิมพ์ไปจนถึงหน้าเว็บด้วย HTML/CSS/JS</div>
                 </div>
             </div>
             
@@ -1209,7 +1275,7 @@ footer {
                 <div class="translucent-panel timeline-content">
                     <div class="timeline-date">2022 - 2023</div>
                     <div class="timeline-title">Graphic Designer (School Projects)</div>
-                    <div class="timeline-desc">รับหน้าที่ออกแบบสื่อสิ่งพิมพ์ Infographic, โปสเตอร์, และสื่อนำเสนอสำหรับกิจกรรมต่างๆ ภายในโรงเรียน โดยเน้นการจัดวางที่สวยงามและสื่อสารข้อมูลได้อย่างมีประสิทธิภาพตามสายการเรียนนิเทศศิลป์</div>
+                    <div class="timeline-desc">ช่วยออกแบบ Infographic โปสเตอร์ และสื่อนำเสนอให้กิจกรรมต่างๆ ในโรงเรียน เป็นงานที่ได้ฝึกจัดหน้าให้สวยและอ่านง่ายตามสายนิเทศศิลป์เลย</div>
                 </div>
             </div>
             
@@ -1218,7 +1284,7 @@ footer {
                 <div class="translucent-panel timeline-content">
                     <div class="timeline-date">2021</div>
                     <div class="timeline-title">Began Coding Journey</div>
-                    <div class="timeline-desc">เริ่มต้นศึกษาการเขียนโปรแกรมด้วยตัวเองผ่านอินเทอร์เน็ต เริ่มจาก HTML/CSS ขั้นพื้นฐาน ก่อนจะขยับไปสู่ JavaScript และ Lua เพื่อตอบสนองความชอบในการเล่นเกมและการสร้างเกม</div>
+                    <div class="timeline-desc">เริ่มหัดเขียนโค้ดเองผ่านอินเทอร์เน็ต จาก HTML/CSS พื้นฐาน ก่อนขยับไปเรียน JavaScript กับ Lua เพราะชอบเล่นเกมแล้วอยากลองทำเกมเองดูบ้าง</div>
                 </div>
             </div>
         </div>
@@ -1242,7 +1308,7 @@ footer {
                         </div>
                         <h3 class="project-title">Event Poster & Infographic Set</h3>
                     </div>
-                    <p class="project-desc">ออกแบบโปสเตอร์และ Infographic สำหรับกิจกรรมต่างๆ ของโรงเรียน เน้นจัดวางองค์ประกอบให้อ่านง่ายและดึงดูดสายตา</p>
+                    <p class="project-desc">ออกแบบโปสเตอร์กับ Infographic ให้กิจกรรมต่างๆ ในโรงเรียน เน้นจัดวางให้อ่านง่ายและดูสะดุดตา</p>
                 </div>
                 <div class="project-footer">
                     <span class="project-tag">Illustrator</span>
@@ -1258,7 +1324,7 @@ footer {
                         </div>
                         <h3 class="project-title">Small Web Utilities</h3>
                     </div>
-                    <p class="project-desc">เขียนเว็บเครื่องมือเล็กๆ ด้วย JavaScript เช่น ตัวแปลงหน่วยและ To-do list เพื่อฝึกเขียนโค้ดฝั่ง Frontend</p>
+                    <p class="project-desc">ลองเขียนเว็บเครื่องมือเล็กๆ ด้วย JavaScript เช่น ตัวแปลงหน่วยกับ To-do list ไว้ฝึกมือฝั่ง Frontend</p>
                 </div>
                 <div class="project-footer">
                     <span class="project-tag">JavaScript</span>
@@ -1274,7 +1340,7 @@ footer {
                         </div>
                         <h3 class="project-title">Mini Browser Game</h3>
                     </div>
-                    <p class="project-desc">ลองเขียนเกมเล็กๆ เล่นในเบราว์เซอร์ด้วย HTML Canvas และ JavaScript เพื่อฝึกเรื่อง Game Loop และการชนกันของวัตถุ</p>
+                    <p class="project-desc">ลองเขียนเกมเล็กๆ เล่นในเบราว์เซอร์ด้วย HTML Canvas กับ JavaScript ไว้ฝึกเรื่อง Game Loop และการชนกันของวัตถุดูบ้าง</p>
                 </div>
                 <div class="project-footer">
                     <span class="project-tag">Canvas</span>
@@ -1290,7 +1356,7 @@ footer {
                         </div>
                         <h3 class="project-title">Spatial UI Interface</h3>
                     </div>
-                    <p class="project-desc">ออกแบบและพัฒนา User Interface แนวใหม่สไตล์ Glassmorphism และ Spatial Computing ด้วย HTML, CSS, JavaScript แบบเพียวๆ ไร้ Framework เหมือนกับพอร์ตโฟลิโอเว็บนี้</p>
+                    <p class="project-desc">ออกแบบและเขียน UI สไตล์ Glassmorphism แบบ Spatial ด้วย HTML, CSS, JavaScript ล้วนๆ ไม่พึ่ง Framework เหมือนเว็บพอร์ตนี้เลย</p>
                 </div>
                 <div class="project-footer">
                     <span class="project-tag">Frontend</span>
@@ -1308,7 +1374,7 @@ footer {
         <div class="translucent-panel contact-card reveal-node">
             <svg class="contact-icon-large" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             <h2 class="section-title">Get In Touch</h2>
-            <p class="contact-desc">สนใจพูดคุยแลกเปลี่ยนเรื่องโค้ดดิ้ง, การทำเกม, งานดีไซน์, หรือต้องการจ้างงาน<br>สามารถติดต่อผมได้ผ่านช่องทางด้านล่างนี้เลยครับ</p>
+            <p class="contact-desc">อยากคุยเรื่องโค้ด เรื่องเกม เรื่องงานดีไซน์ หรือจะติดต่อจ้างงานก็ได้ครับ<br>ทักมาได้เลยผ่านช่องทางด้านล่างนี้</p>
             
             <div class="contact-buttons">
                 <!-- Inline SVG Facebook (No Lucide dependency!) -->
