@@ -1,0 +1,8 @@
+{
+  "name": "THADAPAN SEINGYONG — Spatial Portfolio",
+  "description": "Spatial portfolio showcasing programming, game coding, and graphic design projects by Thadapan Seingyong (Zack).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
