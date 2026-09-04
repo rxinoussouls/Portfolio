@@ -235,6 +235,12 @@ ul, ol {
         rgba(2, 5, 10, 1) 100%
     );
     mix-blend-mode: multiply;
+    animation: vignettePulse 12s ease-in-out infinite;
+}
+
+@keyframes vignettePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.82; }
 }
 
 .bg-grid-layer {
@@ -461,21 +467,75 @@ section {
 
 /* HERO SECTION */
 .hero-grid {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
     width: 100%;
 }
 
 .hero-text-side {
     position: relative;
     z-index: 2;
-    max-width: 700px;
-    text-align: center;
+    text-align: left;
     transform: translate3d(
         calc(var(--parallax-x) * 1.5), 
         calc(var(--parallax-y) * 1.5), 
         0
     );
+}
+
+.hero-photo-side {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    transform: translate3d(
+        calc(var(--parallax-x) * 1.2), 
+        calc(var(--parallax-y) * 1.2), 
+        0
+    );
+}
+
+.profile-photo-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 4 / 5;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 
+        0 0 60px rgba(79, 221, 235, 0.3),
+        inset 0 2px 6px rgba(255, 255, 255, 0.25);
+    transition: transform 0.4s var(--spring-easing), box-shadow 0.4s ease;
+}
+
+.profile-photo-wrap:hover {
+    transform: scale(1.02);
+    box-shadow: 
+        0 0 80px rgba(79, 221, 235, 0.45),
+        inset 0 2px 6px rgba(255, 255, 255, 0.3);
+}
+
+.profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-photo-fallback {
+    display: none;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--apple-blue), var(--cyan-bright));
+    color: #fff;
+    font-family: var(--font-primary);
+    font-size: 3rem;
+    font-weight: 800;
 }
 
 .glowing-pill {
@@ -545,7 +605,7 @@ section {
     font-size: clamp(1.2rem, 2.5vw, 1.8rem);
     font-weight: 400;
     color: var(--text-secondary);
-    margin: 0 auto 40px auto;
+    margin: 0 0 40px 0;
     max-width: 600px;
     line-height: 1.5;
 }
@@ -558,7 +618,7 @@ section {
 /* Badges */
 .badges-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 16px;
     flex-wrap: wrap;
 }
@@ -1056,6 +1116,13 @@ footer {
         display: flex;
         flex-direction: column;
         align-items: center;
+        text-align: center;
+    }
+    .hero-photo-side {
+        order: -1;
+    }
+    .profile-photo-wrap {
+        max-width: 240px;
     }
     .badges-container { justify-content: center; }
     
@@ -1149,7 +1216,7 @@ footer {
                     THADAPAN<br>SEINGYONG
                 </h1>
                 <p class="hero-subtitle reveal-node" style="transition-delay: 0.2s;">
-                    Hi, I'm <strong>ZACK</strong>. A passionate Programmer, Game Scripter, and Graphic Designer crafting digital experiences.
+                    Hi, I'm <strong>ZACK</strong> — a student interested in programming, game scripting, and graphic design.
                 </p>
                 <div class="badges-container reveal-node" style="transition-delay: 0.3s;">
                     <div class="interactive-glass-badge">
@@ -1164,6 +1231,17 @@ footer {
                         <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
                         นิเทศศิลป์
                     </div>
+                </div>
+            </div>
+            <div class="hero-photo-side">
+                <div class="profile-photo-wrap reveal-node" style="transition-delay: 0.4s;">
+                    <img 
+                        src="profile.jpg" 
+                        alt="Thadapan Seingyong" 
+                        class="profile-photo"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    >
+                    <div class="profile-photo-fallback">TS</div>
                 </div>
             </div>
         </div>
@@ -1188,12 +1266,12 @@ footer {
             
             <div class="about-stats">
                 <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.1s;">
-                    <div class="stat-number">4+</div>
-                    <div class="stat-label">Years of Coding</div>
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">Years Coding</div>
                 </div>
                 <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.2s;">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Projects Done</div>
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Projects</div>
                 </div>
                 <div class="translucent-panel stat-box reveal-node" style="transition-delay: 0.3s;">
                     <div class="stat-number">M.4</div>
@@ -1257,24 +1335,24 @@ footer {
                 <div class="skill-ring-container">
                     <svg class="skill-ring-svg" viewBox="0 0 100 100">
                         <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
-                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="95"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="70"></circle>
                     </svg>
-                    <div class="skill-number">95%</div>
+                    <div class="skill-number">70%</div>
                 </div>
-                <div class="skill-label">Fast Typing</div>
-                <div class="skill-desc">High WPM for rapid development</div>
+                <div class="skill-label">Game Scripting</div>
+                <div class="skill-desc">Basic game logic & scripting (Lua, JS)</div>
             </div>
             
             <div class="translucent-panel skill-card reveal-node" style="transition-delay: 0.4s;">
                 <div class="skill-ring-container">
                     <svg class="skill-ring-svg" viewBox="0 0 100 100">
                         <circle class="skill-ring-bg" cx="50" cy="50" r="45"></circle>
-                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="100"></circle>
+                        <circle class="skill-ring-progress" cx="50" cy="50" r="45" data-percent="75"></circle>
                     </svg>
-                    <div class="skill-number">100%</div>
+                    <div class="skill-number">75%</div>
                 </div>
-                <div class="skill-label">Game Logic</div>
-                <div class="skill-desc">Deep understanding of game flow & UX</div>
+                <div class="skill-label">Problem Solving</div>
+                <div class="skill-desc">Enjoys debugging & figuring things out</div>
             </div>
         </div>
     </div>
@@ -1414,7 +1492,13 @@ footer {
                 <!-- Inline SVG Instagram (No Lucide dependency!) -->
                 <a href="https://instagram.com/zackthadapan" target="_blank" class="ios-physics-btn">
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                    Instagram: @zackthadapan
+                    Instagram: @zxckthadapan
+                </a>
+
+                <!-- Inline SVG Email -->
+                <a href="mailto:thzdapan67@gmail.com" class="ios-physics-btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    thzdapan67@gmail.com
                 </a>
             </div>
         </div>
@@ -1425,9 +1509,8 @@ footer {
 <footer>
     <div class="container">
         <p class="footer-text">
-            Designed & Developed from scratch with <span class="footer-heart">♥</span> by <strong>Thadapan Seingyong (Zack)</strong>.<br>
-            No templates. No frameworks. Pure HTML, CSS, and JS OOP Physics Engine.<br>
-            © 2026 Thadapan Seingyong (Zack). All rights reserved.
+            Made by <strong>Thadapan Seingyong (Zack)</strong> with <br>
+            © 2026 All rights reserved.
         </p>
     </div>
 </footer>
