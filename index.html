@@ -57,11 +57,7 @@
     --glass-border: rgba(215, 251, 255, 0.15);
     --glass-border-highlight: rgba(255, 255, 255, 0.4);
     
-    /* Physics & Interactive Variables */
-    --pointer-x: 50vw;
-    --pointer-y: 50vh;
-    --parallax-x: 0px;
-    --parallax-y: 0px;
+    /* Interactive Variables */
     --card-px: 50%;
     --card-py: 50%;
     
@@ -135,12 +131,6 @@ ul, ol {
     z-index: -5;
     pointer-events: none;
     overflow: hidden;
-    transform: translate3d(
-        calc(var(--parallax-x) * 0.25), 
-        calc(var(--parallax-y) * 0.25), 
-        0
-    );
-    will-change: transform;
 }
 
 #bg-canvas {
@@ -385,11 +375,6 @@ section {
 .section-header {
     text-align: center;
     margin-bottom: 64px;
-    transform: translate3d(
-        calc(var(--parallax-x) * 0.4), 
-        calc(var(--parallax-y) * 0.4), 
-        0
-    );
 }
 
 .section-title {
@@ -478,11 +463,6 @@ section {
     position: relative;
     z-index: 2;
     text-align: left;
-    transform: translate3d(
-        calc(var(--parallax-x) * 1.5), 
-        calc(var(--parallax-y) * 1.5), 
-        0
-    );
 }
 
 .hero-photo-side {
@@ -490,11 +470,6 @@ section {
     z-index: 2;
     display: flex;
     justify-content: center;
-    transform: translate3d(
-        calc(var(--parallax-x) * 1.2), 
-        calc(var(--parallax-y) * 1.2), 
-        0
-    );
 }
 
 .profile-photo-wrap {
@@ -1075,17 +1050,6 @@ footer {
     font-family: var(--font-primary);
 }
 
-.footer-heart {
-    color: #ff4757;
-    display: inline-block;
-    animation: heartbeat 1.5s infinite;
-}
-
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-}
-
 /* ANIMATIONS & REVEAL SYSTEM */
 .reveal-node {
     opacity: 0;
@@ -1490,7 +1454,7 @@ footer {
                 </a>
                 
                 <!-- Inline SVG Instagram (No Lucide dependency!) -->
-                <a href="https://instagram.com/zackthadapan" target="_blank" class="ios-physics-btn">
+                <a href="https://instagram.com/zxckthadapan" target="_blank" class="ios-physics-btn">
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                     Instagram: @zxckthadapan
                 </a>
@@ -1509,25 +1473,21 @@ footer {
 <footer>
     <div class="container">
         <p class="footer-text">
-            Made by <strong>Thadapan Seingyong (Zack)</strong> with <br>
+            Made by <strong>Thadapan Seingyong (Zack)</strong><br>
             © 2026 All rights reserved.
         </p>
     </div>
 </footer>
 
 <script>
-// Handles pointer/parallax physics, the hero 3D drag object, nav pill animation,
-// scroll reveal, and a small canvas particle background.
+// Handles the nav pill animation, panel hover glow, particle background,
+// and scroll reveal.
 
 // UTILITIES & CONFIG
 const CONFIG = {
     SPRING: {
         STIFFNESS: 0.08,
         DAMPING: 0.75
-    },
-    PARALLAX: {
-        STRENGTH: 0.08,
-        TILT_LIMIT: 25
     },
     CANVAS: {
         PARTICLE_COUNT: window.innerWidth > 768 ? 120 : 60,
@@ -1581,7 +1541,6 @@ let PointerState = {
 };
 
 // Instantiating Springs
-const ParallaxSpring = new SpringPhysics(0.04, 0.85);
 const NavPillSpring = new SpringPhysics(0.12, 0.78);
 
 // DOM ELEMENTS
@@ -1747,28 +1706,43 @@ window.addEventListener('scroll', () => {
     }
 }, { passive: true });
 
+// Slower, eased scroll when clicking a nav link
+function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function smoothScrollTo(targetY, duration) {
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    const startTime = performance.now();
+
+    function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+        if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+Elements.navItems.forEach(link => {
+    link.addEventListener('click', (e) => {
+        const targetEl = document.querySelector(link.getAttribute('href'));
+        if (!targetEl) return;
+        e.preventDefault();
+        const targetY = targetEl.getBoundingClientRect().top + window.scrollY;
+        smoothScrollTo(targetY, 1400);
+    });
+});
+
 // MAIN PHYSICS RENDER LOOP (REQUEST ANIMATION FRAME)
 function mainEngineLoop() {
-    // 1. Calculate Global Parallax Target based on pointer from center of screen
-    let centerX = window.innerWidth / 2;
-    let centerY = window.innerHeight / 2;
-    ParallaxSpring.setTarget(
-        (PointerState.rawX - centerX) * CONFIG.PARALLAX.STRENGTH,
-        (PointerState.rawY - centerY) * CONFIG.PARALLAX.STRENGTH
-    );
-    ParallaxSpring.update();
-
-    // Apply global CSS parallax variables
-    Elements.html.style.setProperty('--parallax-x', `${ParallaxSpring.currentValueX}px`);
-    Elements.html.style.setProperty('--parallax-y', `${ParallaxSpring.currentValueY}px`);
-
-    // 2. Update Navigation Pill Spring
+    // 1. Update Navigation Pill Spring
     NavPillSpring.update();
     if (Elements.navPill) {
         Elements.navPill.style.transform = `translateX(${NavPillSpring.currentValueX}px)`;
     }
 
-    // 3. Update Translucent Panels Hover (Radial Gradient Tracker)
+    // 2. Update Translucent Panels Hover (Radial Gradient Tracker)
     Elements.panels.forEach(panel => {
         const rect = panel.getBoundingClientRect();
         // Only calculate if panel is inside viewport
@@ -1780,7 +1754,7 @@ function mainEngineLoop() {
         }
     });
     
-    // 4. Render Canvas Background
+    // 3. Render Canvas Background
     animateCanvas();
 
     // Request next frame
